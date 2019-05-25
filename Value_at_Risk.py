@@ -9,32 +9,24 @@ from typing import List
 
 from kb_sql_class import SQLConnector
 
-
-
-
-all_price_connector=SQLConnector(as_index='Date',
-                                query='''SELECT  Date,`Company Name`,`Adj Close`
+all_price_connector = SQLConnector(as_index='Date',
+                                   query='''SELECT  Date,`Company Name`,`Adj Close`
                                        from all_stock ''')
 
 
-
-
-
-
 class Rates():
-    def __init__(self,compounding):
-        self._compunding=compounding
+    def __init__(self, compounding):
+        self._compunding = compounding
 
-        self.mdf_from_query=all_price_connector.mdf_from_query
-        self.adjusted_query=self.convert_data_frame()
-        self.m_arr_rates=self.calculate_rate()
-
+        self.mdf_from_query = all_price_connector.mdf_from_query
+        self.adjusted_query = self.convert_data_frame()
+        self.m_arr_rates = self.calculate_rate()
 
     def convert_data_frame(self):
         return self.mdf_from_query.pivot(columns='Company Name')
 
     def calculate_rate(self):
-        arr=np.array(self.adjusted_query)
+        arr = np.array(self.adjusted_query)
         return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
         if self._compunding == 'continious':
 
@@ -48,11 +40,8 @@ class Rates():
         return return_all[1:]
 
 
-
-
 if __name__ == "__main__":
-    rates=Rates(compounding='continious')
+    rates = Rates(compounding='continious')
     all_price_connector.close_conection()
 
 print('THE END')
-
