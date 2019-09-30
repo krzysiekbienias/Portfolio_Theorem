@@ -15,12 +15,14 @@ all_price_connector = SQLConnector(as_index='Date',
 
 
 class Rates():
-    def __init__(self, compounding):
+    def __init__(self, compounding,weigths):
         self._compunding = compounding
+        self._weights=weigths
 
         self.mdf_from_query = all_price_connector.mdf_from_query
         self.adjusted_query = self.convert_data_frame()
         self.m_arr_rates = self.calculate_rate()
+        self.m_todays_portfolio_value=self.todays_portfolio()
 
     def convert_data_frame(self):
         return self.mdf_from_query.pivot(columns='Company Name')
@@ -39,9 +41,14 @@ class Rates():
 
         return return_all[1:]
 
+    def todays_portfolio(self):
+        return self.adjusted_query[:-1]
+
+
 
 if __name__ == "__main__":
-    rates = Rates(compounding='continious')
+    rates = Rates(compounding='continious',
+                  weigths=[0.3,0.5,0.2])
     all_price_connector.close_conection()
 
 print('THE END')
