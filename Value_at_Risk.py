@@ -8,13 +8,15 @@ import os
 from typing import List
 
 from kb_sql_class import SQLConnector
+from get_data import QuandlProvider
+
 
 all_price_connector = SQLConnector(as_index='Date',
                                    query='''SELECT  Date,`Company Name`,`Adj Close`
                                        from all_stock ''')
 
 
-class Rates():
+class RatesFromDataBase():
     def __init__(self, compounding,weigths):
         self._compunding = compounding
         self._weights=weigths
@@ -44,10 +46,33 @@ class Rates():
     def todays_portfolio(self):
         return self.adjusted_query[:-1]
 
+class RatesFromQuantLib(QuandlProvider):
+    def __init__(self,tickers,startDate,endDate,dateFormat,ratesType):
+        QuandlProvider.__init__(self,tickers,startDate,endDate,dateFormat)
+        self._ratesType=ratesType
+
+
+
+    def calculate_rate(self):
+        arr = np.array(self.adjusted_query)
+        return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
+        if self._compunding == 'continious':
+
+            for i in range(1, len(arr)):
+                return_all[i] = np.log(arr[i] / arr[i - 1])
+        if self._compunding == 'simple':
+
+            for i in range(1, len(arr)):
+                return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
+
+        return return_all[1:]
+
+    def todays_portfolio(self):
+        return self.adjusted_query[:-1]
 
 
 if __name__ == "__main__":
-    rates = Rates(compounding='continious',
+    rates = RatesFromDataBase(compounding='continious',
                   weigths=[0.3,0.5,0.2])
     all_price_connector.close_conection()
 
