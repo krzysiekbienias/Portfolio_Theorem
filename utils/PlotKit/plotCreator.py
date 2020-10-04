@@ -5,7 +5,7 @@ import os
 
 class PlotFinanceGraphs:
     def __init__(self):
-        self.storePng='/Users/krzysiekbienias/Documents/GitHub/BlackScholesWorld/HelperFiles'
+        self.storePng='/Users/krzysiekbienias/Documents/GitHub/Portfolio_Theorem/HelperFiles'
 
 
     def manyPlots(self,arg,l_values,ls_labes,figName,xAxisName=None,yAxisName=None,title=None,):
