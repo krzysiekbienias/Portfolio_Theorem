@@ -2,13 +2,11 @@ import dash
 import dash_core_components as dcc
 import dash_table as dt
 import dash_html_components as html
-import QuantLib as ql
 import datetime
 
-from dash.dependencies import Output, Input,State
-from dash.exceptions import PreventUpdate
+from dash.dependencies import Output, Input
 
-from get_data import QuandlProvider
+from utils.dataProvider.get_data import QuandlProvider
 from dash.exceptions import PreventUpdate
 from utilities import RatesFromQuantLib
 

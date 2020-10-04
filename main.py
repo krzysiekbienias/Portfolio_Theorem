@@ -1,20 +1,13 @@
-import mysql.connector
-import numpy as np
-import pandas as pd
-import pymysql
-import sqlalchemy
-from os import listdir
-import os
-from typing import List
-import quandl
 import sys
-
+import utils.logging_util as l_util
+from apps.app_config import AppConfig
+from utils.dataProvider.get_data import QuandlProvider
 
 
 sys.path.append('../PythonandSQL')
-from kb_sql_class import SQLConnector
 
-from get_data import QuandlProvider
+l_util.config()
+logger=l_util.get_logger(__name__)
 
 if __name__ == "__main__":
     quandConnector=QuandlProvider(tickers=['AAPL', 'MSFT', 'GOOG', 'WMT'],startDate='2015-01-01',

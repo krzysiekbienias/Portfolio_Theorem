@@ -1,14 +1,7 @@
-import mysql.connector
 import numpy as np
-import pandas as pd
-import pymysql
-import sqlalchemy
-from os import listdir
-import os
-from typing import List
 
 from kb_sql_class import SQLConnector
-from get_data import QuandlProvider
+from utils.dataProvider.get_data import QuandlProvider
 
 
 all_price_connector = SQLConnector(as_index='Date',
