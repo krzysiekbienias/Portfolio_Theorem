@@ -1,9 +1,6 @@
 import os
 
-from mos_utils.apps.AnalyticalPrice.analyticalPrice import AnalyticalRun
-from mos_utils.utils.checkingInputUtil import CheckInputRun
-from mos_utils.apps.MonteCarloSimulation.scenario_generator import ScenarioEquityRun
-from mos_utils.apps.Greeks.greeks import GreeksRun
+from apps.valueAtRisk.Value_at_Risk import VaRRun
 
 
 curr_file_path=os.path.abspath(os.path.dirname(__file__))
@@ -14,10 +11,8 @@ class AppConfig:
     app_config_dict=dict()
 
     def __init__(self):
-        self.app_config_dict['ANALYTICAL_PRICE']=AnalyticalRun
-        self.app_config_dict['CHECK_INPUT']=CheckInputRun
-        self.app_config_dict['EQUITY_SIMULATION']=ScenarioEquityRun
-        self.app_config_dict['SENSITIVITY_ANALYSIS']=GreeksRun
+        self.app_config_dict['VALUE_AT_RISK']=VaRRun
+
 
     def get_app(self,arg_app_name):
         """Returns the app based on the name

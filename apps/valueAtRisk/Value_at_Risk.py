@@ -3,6 +3,13 @@ import numpy as np
 from kb_sql_class import SQLConnector
 from utils.dataProvider.get_data import QuandlProvider
 
+from apps.base_app import BaseApp
+from utils.ExcelUtils.excelUtils import ExcelFilesDetails,CreateDataFrame,OutputInExcel
+
+import utils.logging_util as l_util
+from utils.PlotKit.plotCreator import PlotFinanceGraphs
+
+
 
 all_price_connector = SQLConnector(as_index='Date',
                                    query='''SELECT  Date,`Company Name`,`Adj Close`
@@ -64,9 +71,16 @@ class RatesFromQuantLib(QuandlProvider):
         return self.adjusted_query[:-1]
 
 
-if __name__ == "__main__":
-    rates = RatesFromDataBase(compounding='continious',
-                  weigths=[0.3,0.5,0.2])
-    all_price_connector.close_conection()
+class VaRRun(BaseApp):
+    def __init__(self, **app_params):
+        app_name='value_at_risk'
+        self._weights=''
+        self._compound=''
+        super().__init__(app_name, app_params)
+
+    def run(self):
+        rates=RatesFromDataBase()
+
+
 
 print('THE END')
