@@ -1,6 +1,7 @@
 import numpy as np
+import pandas as pd
 
-from kb_sql_class import SQLConnector
+from utils.sql_connector import SQLConnector
 from utils.dataProvider.get_data import QuandlProvider
 
 from apps.base_app import BaseApp
@@ -11,64 +12,67 @@ from utils.PlotKit.plotCreator import PlotFinanceGraphs
 
 
 
-all_price_connector = SQLConnector(as_index='Date',
-                                   query='''SELECT  Date,`Company Name`,`Adj Close`
-                                       from all_stock ''')
-
+sqlConn=SQLConnector()
 
 class RatesFromDataBase():
     def __init__(self, compounding,weigths):
         self._compunding = compounding
         self._weights=weigths
 
-        self.mdf_from_query = all_price_connector.mdf_from_query
-        self.adjusted_query = self.convert_data_frame()
-        self.m_arr_rates = self.calculate_rate()
-        self.m_todays_portfolio_value=self.todays_portfolio()
+        self.mdfshareQuotations = get
+        # self.adjusted_query = self.convert_data_frame()
+        # self.m_arr_rates = self.calculate_rate()
+        # self.m_todays_portfolio_value=self.todays_portfolio()
 
-    def convert_data_frame(self):
-        return self.mdf_from_query.pivot(columns='Company Name')
+    def getShareQuatations(self):
+        query='''select * 
+                from all_stock; '''
+        df = pd.read_sql(query, con=sqlConn)
+        return df
 
-    def calculate_rate(self):
-        arr = np.array(self.adjusted_query)
-        return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
-        if self._compunding == 'continious':
+    # def convert_data_frame(self):
+    #     return self.mdf_from_query.pivot(columns='Company Name')
+    #
+    # def calculate_rate(self):
+    #     arr = np.array(self.adjusted_query)
+    #     return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
+    #     if self._compunding == 'continious':
+    #
+    #         for i in range(1, len(arr)):
+    #             return_all[i] = np.log(arr[i] / arr[i - 1])
+    #     if self._compunding == 'simple':
+    #
+    #         for i in range(1, len(arr)):
+    #             return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
+    #
+    #     return return_all[1:]
+    #
+    # def todays_portfolio(self):
+    #     return self.adjusted_query[:-1]
 
-            for i in range(1, len(arr)):
-                return_all[i] = np.log(arr[i] / arr[i - 1])
-        if self._compunding == 'simple':
-
-            for i in range(1, len(arr)):
-                return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
-
-        return return_all[1:]
-
-    def todays_portfolio(self):
-        return self.adjusted_query[:-1]
-
-class RatesFromQuantLib(QuandlProvider):
-    def __init__(self,tickers,startDate,endDate,dateFormat,ratesType):
-        QuandlProvider.__init__(self,tickers,startDate,endDate,dateFormat)
-        self._ratesType=ratesType
-
-
-
-    def calculate_rate(self):
-        arr = np.array(self.adjusted_query)
-        return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
-        if self._compunding == 'continious':
-
-            for i in range(1, len(arr)):
-                return_all[i] = np.log(arr[i] / arr[i - 1])
-        if self._compunding == 'simple':
-
-            for i in range(1, len(arr)):
-                return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
-
-        return return_all[1:]
-
-    def todays_portfolio(self):
-        return self.adjusted_query[:-1]
+# class RatesFromQuantLib(QuandlProvider):
+#     def __init__(self,tickers,startDate,endDate,dateFormat,ratesType):
+#         QuandlProvider.__init__(self,tickers,startDate,endDate,dateFormat)
+#         self._ratesType=ratesType
+#
+#
+#
+#     def calculate_rate(self):
+#         arr = np.array(self.adjusted_query)
+#         return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
+#         if self._compunding == 'continious':
+#
+#             for i in range(1, len(arr)):
+#                 return_all[i] = np.log(arr[i] / arr[i - 1])
+#         if self._compunding == 'simple':
+#
+#             for i in range(1, len(arr)):
+#                 return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
+#
+#         return return_all[1:]
+#
+#     def todays_portfolio(self):
+#         return self.adjusted_query[:-1]
 
 
 class VaRRun(BaseApp):
@@ -79,7 +83,9 @@ class VaRRun(BaseApp):
         super().__init__(app_name, app_params)
 
     def run(self):
-        rates=RatesFromDataBase()
+        rates=RatesFromDataBase(compounding=self,weigths=self._weights)
+
+
 
 
 
