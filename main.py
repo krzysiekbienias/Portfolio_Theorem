@@ -23,6 +23,11 @@ if __name__=="__main__":
     user_opts=c_util.UserOpts()
     main(user_opts.app_name)
 
+"""
+--APP_NAME=VALUE_AT_RISK
+--APP_PARAMS
+RUN_CFG=/Users/krzysiekbienias/Documents/GitHub/Portfolio_Theorem/run_cfg/valueAtRisk.yaml
+"""
 
     # # quandConnector=QuandlProvider(tickers=['AAPL', 'MSFT', 'GOOG', 'WMT'],startDate='2015-01-01',
     # #                               endDate='2019-08-31',dateFormat='%Y-%m-%d')

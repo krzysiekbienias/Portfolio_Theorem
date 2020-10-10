@@ -14,12 +14,12 @@ from utils.PlotKit.plotCreator import PlotFinanceGraphs
 
 sqlConn=SQLConnector()
 
-class RatesFromDataBase():
+class DataBaseExtractor():
     def __init__(self, compounding,weigths):
         self._compunding = compounding
         self._weights=weigths
 
-        self.mdfshareQuotations = get
+        self.mdfshareQuotations = self.getShareQuatations()
         # self.adjusted_query = self.convert_data_frame()
         # self.m_arr_rates = self.calculate_rate()
         # self.m_todays_portfolio_value=self.todays_portfolio()
@@ -27,7 +27,7 @@ class RatesFromDataBase():
     def getShareQuatations(self):
         query='''select * 
                 from all_stock; '''
-        df = pd.read_sql(query, con=sqlConn)
+        df = pd.read_sql(query, con=sqlConn.my_sql_conn)
         return df
 
     # def convert_data_frame(self):
@@ -83,7 +83,8 @@ class VaRRun(BaseApp):
         super().__init__(app_name, app_params)
 
     def run(self):
-        rates=RatesFromDataBase(compounding=self,weigths=self._weights)
+        rates=DataBaseExtractor(compounding=self,weigths=self._weights)
+        data=rates.getShareQuatations()
 
 
 
