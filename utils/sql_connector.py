@@ -8,7 +8,7 @@ import os
 from typing import List
 from six import string_types
 
-from mos_utils.utils.common_util import load_cfg
+from utils.common_util import load_cfg
 
 curr_file_path=os.path.abspath(os.path.dirname(__file__))
 
@@ -68,8 +68,3 @@ class SQLConnector:
     def close_conection(self):
         self.m_connection_details.close()
 
-
-def load_cfg
-
-if __name__ == "__main__":
-    pass
