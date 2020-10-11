@@ -11,6 +11,7 @@ import utils.logging_util as l_util
 from utils.PlotKit.plotCreator import PlotFinanceGraphs
 
 
+logger=l_util.get_logger(__name__)
 
 sqlConn=SQLConnector()
 
@@ -20,33 +21,40 @@ class DataBaseExtractor():
         self._weights=weigths
 
         self.mdfshareQuotations = self.getShareQuatations()
-        # self.adjusted_query = self.convert_data_frame()
-        # self.m_arr_rates = self.calculate_rate()
+        self.close_price = self.processing_data_frame()
+        self.m_arr_rates = self.calculate_rate()
         # self.m_todays_portfolio_value=self.todays_portfolio()
 
     def getShareQuatations(self):
         query='''select * 
                 from all_stock; '''
         df = pd.read_sql(query, con=sqlConn.my_sql_conn)
+        logger.info('Extract Quatations from Data Base')
         return df
 
-    # def convert_data_frame(self):
-    #     return self.mdf_from_query.pivot(columns='Company Name')
+    def processing_data_frame(self):
+        subdf=self.mdfshareQuotations[['Date','Adj Close','Company Name']]
+        return subdf.pivot(index='Date',columns='Company Name',values='Adj Close')
     #
-    # def calculate_rate(self):
-    #     arr = np.array(self.adjusted_query)
-    #     return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
-    #     if self._compunding == 'continious':
-    #
-    #         for i in range(1, len(arr)):
-    #             return_all[i] = np.log(arr[i] / arr[i - 1])
-    #     if self._compunding == 'simple':
-    #
-    #         for i in range(1, len(arr)):
-    #             return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
-    #
-    #     return return_all[1:]
-    #
+    def calculate_rate(self):
+        if self._compunding not in ['continious','simple']:
+            raise Exception("Rates type not defined properly")
+            logger.info('Please provide corrct rates type')
+        else:
+            logger.info(f'You have defined {self._compunding} rates' )
+            arr = np.array(self.close_price)
+            return_all = np.zeros((np.shape(arr)[0], np.shape(arr)[1]))
+            if self._compunding == 'continious':
+
+                for i in range(1, len(arr)):
+                    return_all[i] = np.log(arr[i] / arr[i - 1])
+            if self._compunding == 'simple':
+
+                for i in range(1, len(arr)):
+                    return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
+
+            return return_all[1:]
+        #
     # def todays_portfolio(self):
     #     return self.adjusted_query[:-1]
 
@@ -83,8 +91,8 @@ class VaRRun(BaseApp):
         super().__init__(app_name, app_params)
 
     def run(self):
-        rates=DataBaseExtractor(compounding=self,weigths=self._weights)
-        data=rates.getShareQuatations()
+        data_obj=DataBaseExtractor(compounding=self._compound,weigths=self._weights)
+        rates=data_obj.m_arr_rates
 
 
 
