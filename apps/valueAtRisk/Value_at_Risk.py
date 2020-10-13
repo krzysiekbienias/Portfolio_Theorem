@@ -88,11 +88,20 @@ class VaRRun(BaseApp):
         app_name='value_at_risk'
         self._weights=''
         self._compound=''
+        self._excel_location=''
+        self._excel_name=''
         super().__init__(app_name, app_params)
 
     def run(self):
+        results_monitoring_obj=OutputInExcel(FileName=self._excel_name,Path=self._excel_location)
         data_obj=DataBaseExtractor(compounding=self._compound,weigths=self._weights)
         rates=data_obj.m_arr_rates
+
+        results_monitoring_obj.insertWholeDataFrame(filename=self._excel_name,fileLocation=self._excel_location,
+                                                    sheet_name='close price',
+                                                    df=data_obj.close_price,startcol=0,startrow=0,
+                                                    include_index=True,include_header=True)
+
 
 
 

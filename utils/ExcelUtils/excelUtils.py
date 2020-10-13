@@ -147,7 +147,8 @@ class OutputInExcel:
                     oDataToExcel.save()
                     oDataToExcel.close()
 
-    def appendDfToExisingExel(self,filename,fileLocation,df,sheet_name,startrow=None,truncate_sheet=False,startcol=None):
+    def insertWholeDataFrame(self,filename,fileLocation,df,sheet_name,include_index,
+                             include_header,startrow=None,truncate_sheet=False,startcol=None):
 
         """Append a DataFrame [df] to existing Excel file [filename] into Sheet[sheet_name]
                If [filename] does not exist then this function will create it.
@@ -165,7 +166,7 @@ class OutputInExcel:
             #try to open an existing workbook
             writer.book=load_workbook(filename)
             if startrow is None and sheet_name in writer.book.sheetnames:
-                startrow=writer.book.sheetnames.max_row
+                startrow=writer.book[sheet_name].max_row
             if truncate_sheet and sheet_name in writer.book.sheetnames:
                 # index of [sheet_name] sheet
 
@@ -180,12 +181,7 @@ class OutputInExcel:
             pass
         if startrow is None:
             startrow=0
-        df.to_excel(writer,sheet_name,startrow=startrow,startcol=startcol,header=False,index=False)
-        ws=writer.book['INPUT_3M']
-
-        cell=ws.cell(column=6,row=2)
-        cell=5
-
+        df.to_excel(writer,sheet_name,startrow=startrow,startcol=startcol,header=include_header,index=include_index)
         writer.save()
 
     def flexibleInsertingScalar(self,cell_row,cell_col,value,tab_name):

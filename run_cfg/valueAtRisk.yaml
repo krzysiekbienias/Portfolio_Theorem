@@ -1,2 +1,4 @@
 weights: [0.2,0.5,0.3]
 compound: continious
+excel_name: var_results.xlsx
+excel_location: /Users/krzysiekbienias/Documents/GitHub/Portfolio_Theorem/HelperFiles
