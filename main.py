@@ -5,6 +5,7 @@ from utils.dataProvider.get_data import QuandlProvider
 from utils import common_util as c_util
 
 
+
 sys.path.append('../PythonandSQL')
 
 l_util.config()

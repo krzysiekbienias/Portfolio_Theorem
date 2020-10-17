@@ -6,6 +6,9 @@ from utils.dataProvider.get_data import QuandlProvider
 
 from apps.base_app import BaseApp
 from utils.ExcelUtils.excelUtils import ExcelFilesDetails,CreateDataFrame,OutputInExcel
+from apps.PortfolioUtilities.portfolioFunctions import portfolioValue
+from utils.common_util import str_to_numb
+
 
 import utils.logging_util as l_util
 from utils.PlotKit.plotCreator import PlotFinanceGraphs
@@ -54,7 +57,9 @@ class DataBaseExtractor():
                     return_all[i] = (arr[i] - arr[i - 1]) / arr[i - 1]
 
             return return_all[1:]
-        #
+
+
+
     # def todays_portfolio(self):
     #     return self.adjusted_query[:-1]
 
@@ -93,14 +98,23 @@ class VaRRun(BaseApp):
         super().__init__(app_name, app_params)
 
     def run(self):
+        num_weights=str_to_numb(self._weights)
         results_monitoring_obj=OutputInExcel(FileName=self._excel_name,Path=self._excel_location)
         data_obj=DataBaseExtractor(compounding=self._compound,weigths=self._weights)
-        rates=data_obj.m_arr_rates
+        df_rates=pd.DataFrame(data_obj.m_arr_rates)
+        portfolioValue(num_weights, positions=data_obj.close_price[-1:].values.tolist()[0])
+
+        logger.info(f'Current value of Portfolio: {portfolioValue(num_weights,positions=data_obj.close_price[-1:].values.tolist()[0])}')
 
         results_monitoring_obj.insertWholeDataFrame(filename=self._excel_name,fileLocation=self._excel_location,
                                                     sheet_name='close price',
                                                     df=data_obj.close_price,startcol=0,startrow=0,
                                                     include_index=True,include_header=True)
+
+        results_monitoring_obj.insertWholeDataFrame(filename=self._excel_name, fileLocation=self._excel_location,
+                                                    sheet_name='rates',
+                                                    df=df_rates, startcol=0, startrow=0,
+                                                    include_index=True, include_header=True)
 
 
 

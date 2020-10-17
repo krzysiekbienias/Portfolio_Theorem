@@ -105,6 +105,9 @@ def str_to_bool(arg_val):
         return arg_val.lowe() in ['yes','y','1','true']
     return False
 
+def str_to_numb(arg_val):
+    return [float(x) for x in arg_val]
+
 def evaluate_sql(sql_file,param_dict):
     ret_query=''
     with open(sql_file,model='r') as f:
